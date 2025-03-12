@@ -5,7 +5,25 @@ import icon from '../../resources/icon.png?asset'
 import { createSyncState } from '../../../dist/main'
 
 function createWindow(): void {
-  createSyncState({ count: 0 }, { channelPrefix: 'sync-state' })
+  const state = createSyncState(
+    {
+      count: 0,
+      nested: {
+        count: 0
+      }
+    },
+    { channelPrefix: 'sync-state' }
+  )
+  setTimeout(() => {
+    state.value.count++
+  }, 5000)
+  setTimeout(() => {
+    state.value.nested.count++
+  }, 10000)
+
+  setTimeout(() => {
+    state.value = { count: 1, nested: { count: 1 } }
+  }, 20000)
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 900,

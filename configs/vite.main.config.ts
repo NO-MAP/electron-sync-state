@@ -11,6 +11,9 @@ export default defineConfig({
       formats: ['es']
     },
     outDir: resolve(__dirname, '../dist/main'),
+    rollupOptions:{
+      external: ['@vue/reactivity', 'electron']
+    }
   },
   plugins: [
     dts({

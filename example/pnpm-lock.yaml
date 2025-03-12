@@ -14,6 +14,9 @@ importers:
       '@electron-toolkit/utils':
         specifier: ^4.0.0
         version: 4.0.0(electron@34.3.2)
+      '@vue/reactivity':
+        specifier: ^3.5.13
+        version: 3.5.13
     devDependencies:
       '@electron-toolkit/eslint-config-prettier':
         specifier: 3.0.0
