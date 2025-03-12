@@ -26,6 +26,10 @@
     "dist/renderer",
     "README.md"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NO-MAP/electron-sync-state.git"
+  },
   "devDependencies": {
     "@types/node": "^22.13.10",
     "typescript": "^5.0.0",
