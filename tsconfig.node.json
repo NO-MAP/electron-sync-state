@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ESNext",
+    "outDir": "dist/main",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "types": [
+      "node"
+    ],
+    "sourceMap": true,
+    "allowJs": true
+  },
+  "include": [
+    "src/main/**/*",
+    "src/types/**/*",
+    "configs/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
