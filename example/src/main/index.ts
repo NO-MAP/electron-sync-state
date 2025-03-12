@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { createSyncState } from '../../../dist/main/index.js'
+import { createSyncState } from '../../../dist/main'
 
 function createWindow(): void {
   createSyncState({ count: 0 }, { channelPrefix: 'sync-state' })

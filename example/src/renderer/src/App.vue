@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Versions from './components/Versions.vue'
-import { useSyncState } from '../../../../dist/renderer/index.js'
+import { useSyncState } from '../../../../dist/renderer'
 
 const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
 

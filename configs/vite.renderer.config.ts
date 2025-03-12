@@ -7,7 +7,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, '../src/renderer/index.ts'),
       name: 'ElectronRenderer',
-      fileName: 'index.js',
+      fileName: 'index',
       formats: ['es']
     },
     outDir: resolve(__dirname, '../dist/renderer'),

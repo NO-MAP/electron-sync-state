@@ -7,7 +7,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, '../src/main/index.ts'),
       name: 'ElectronMain',
-      fileName: 'index.js',
+      fileName: 'index',
       formats: ['es']
     },
     outDir: resolve(__dirname, '../dist/main'),
