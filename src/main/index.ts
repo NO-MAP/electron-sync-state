@@ -13,6 +13,7 @@ const createRefSyncState = <T>(
   result: Ref<T>;
   syncWatchHandle: SyncWatchHandle;
 } => {
+  const debug = config.debug === undefined ? false : true;
   const state = ref(data) as Ref<T>;
   const mainChannels = generateMainChannelKeyMap(config.channelPrefix);
   const rendererChannels = generateRendererChannelKeyMap(config.channelPrefix);
@@ -23,6 +24,9 @@ const createRefSyncState = <T>(
     sendChangeToRendererWatch = watch(
       () => state.value,
       (value) => {
+        if (debug) {
+          console.log("send change to renderer", value);
+        }
         BrowserWindow.getAllWindows().forEach((window) => {
           window.webContents.send(rendererChannels.SET, toRaw(value));
         });
@@ -39,6 +43,9 @@ const createRefSyncState = <T>(
 
   // 从渲染进程来的值变动
   ipcMain.on(mainChannels.SET, (_event, value: T) => {
+    if (debug) {
+      console.log("change from renderer", value);
+    }
     if (sendChangeToRendererWatch) {
       sendChangeToRendererWatch.stop();
       sendChangeToRendererWatch = undefined;
@@ -51,12 +58,12 @@ const createRefSyncState = <T>(
     result: state,
     syncWatchHandle: {
       pause: () => {
-        sendChangeToRendererWatch?.pause()
+        sendChangeToRendererWatch?.pause();
       },
       resume: () => {
-        sendChangeToRendererWatch?.resume()
-      }
-    }
+        sendChangeToRendererWatch?.resume();
+      },
+    },
   };
 };
 

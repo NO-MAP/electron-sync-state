@@ -18,6 +18,7 @@ const useSyncState = <T>(
   result: Result<T>;
   syncWatchHandle: SyncWatchHandle;
 } => {
+  const debug = config.debug === undefined ? false : true;
   const result = reactive<{
     loading: boolean;
     value: T;
@@ -29,10 +30,13 @@ const useSyncState = <T>(
   const rendererChannels = generateRendererChannelKeyMap(config.channelPrefix);
 
   let sendChangeToMainWatch: WatchHandle | undefined = undefined;
-  const initSendChnageToMainWatch = () => {
+  const initSendChangeToMainWatch = () => {
     sendChangeToMainWatch = watch(
       () => result.value,
       (value) => {
+        if (debug) {
+          console.log("send change to main", value);
+        }
         ipcRenderer.send(mainChannels.SET, toRaw(value));
       },
       {
@@ -40,15 +44,18 @@ const useSyncState = <T>(
       }
     );
   };
-  initSendChnageToMainWatch();
+  initSendChangeToMainWatch();
   ipcRenderer.on(rendererChannels.SET, async (_event, value: UnwrapRef<T>) => {
+    if (debug) {
+      console.log("change from main", value);
+    }
     if (sendChangeToMainWatch) {
       sendChangeToMainWatch.stop();
       sendChangeToMainWatch = undefined;
     }
     console.log("ipcRenderer.on", value);
     result.value = value;
-    initSendChnageToMainWatch();
+    initSendChangeToMainWatch();
     result.loading = false;
   });
 
@@ -58,12 +65,12 @@ const useSyncState = <T>(
     result,
     syncWatchHandle: {
       pause: () => {
-        sendChangeToMainWatch?.pause()
+        sendChangeToMainWatch?.pause();
       },
       resume: () => {
-        sendChangeToMainWatch?.resume()
-      }
-    }
+        sendChangeToMainWatch?.resume();
+      },
+    },
   };
 };
 

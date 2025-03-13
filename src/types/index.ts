@@ -1,5 +1,6 @@
 export interface SyncStateConfig {
   channelPrefix: string
+  debug?: boolean
 }
 
 // 主进程监听的key
