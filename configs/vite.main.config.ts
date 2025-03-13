@@ -8,7 +8,7 @@ export default defineConfig({
       entry: resolve(__dirname, '../src/main/index.ts'),
       name: 'ElectronMain',
       fileName: 'index',
-      formats: ['es']
+      formats: ['cjs', 'es']
     },
     outDir: resolve(__dirname, '../dist/main'),
     rollupOptions:{

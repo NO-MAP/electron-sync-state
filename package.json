@@ -7,16 +7,15 @@
     "build": "npm run build:main && npm run build:renderer",
     "prepublishOnly": "npm run build"
   },
-  "main": "dist/main/index.js",
-  "type": "module",
   "exports": {
-    ".": {
-      "import": "./dist/main/index.js",
-      "require": "./dist/main/index.js"
+    "./main": {
+      "import": "./dist/main/index.mjs",
+      "require": "./dist/main/index.js",
+      "types": "./dist/main/index.d.ts"
     },
     "./renderer": {
-      "import": "./dist/renderer/index.js",
-      "require": "./dist/renderer/index.js"
+      "import": "./dist/renderer/index.mjs",
+      "types": "./dist/renderer/index.d.ts"
     }
   },
   "files": [
