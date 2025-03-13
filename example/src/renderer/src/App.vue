@@ -4,11 +4,23 @@ import { useSyncState } from '../../../../dist/renderer'
 
 const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
 
-const state = useSyncState({
-  channelPrefix: 'sync-state'
-})
+const state = useSyncState<{
+  count: number,
+  nested: {
+    count: number
+  }
+}>(
+  {
+    channelPrefix: 'sync-state'
+  },
+  window.electron.ipcRenderer
+)
 
 console.log('state', state)
+const addHandle = (): void => {
+  state.data.count++
+  state.data.nested.count++
+}
 </script>
 
 <template>
@@ -28,6 +40,10 @@ console.log('state', state)
     <div class="action">
       <a target="_blank" rel="noreferrer" @click="ipcHandle">Send IPC</a>
     </div>
+    <div>
+      {{ state }}
+    </div>
   </div>
+  <button @click="() => addHandle()">ADD</button>
   <Versions />
 </template>

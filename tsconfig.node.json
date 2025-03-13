@@ -16,6 +16,7 @@
   "include": [
     "src/main/**/*",
     "src/types/**/*",
+    "src/utils/**/*",
     "configs/**/*"
   ],
   "exclude": [

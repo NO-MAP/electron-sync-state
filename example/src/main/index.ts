@@ -2,10 +2,10 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { createSyncState } from '../../../dist/main'
+import { createRefSyncState } from '../../../dist/main'
 
 function createWindow(): void {
-  const state = createSyncState(
+  const state = createRefSyncState(
     {
       count: 0,
       nested: {

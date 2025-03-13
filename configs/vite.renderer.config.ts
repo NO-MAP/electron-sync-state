@@ -11,6 +11,9 @@ export default defineConfig({
       formats: ['es']
     },
     outDir: resolve(__dirname, '../dist/renderer'),
+    rollupOptions: {
+      external: ['vue', '@electron-toolkit/preload']
+    }
   },
   plugins: [
     dts({

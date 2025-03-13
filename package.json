@@ -5,8 +5,6 @@
     "build:main": "vite build -c configs/vite.main.config.ts",
     "build:renderer": "vite build -c configs/vite.renderer.config.ts",
     "build": "npm run build:main && npm run build:renderer",
-    "dev:main": "tsc -p tsconfig.node.json --watch",
-    "dev:renderer": "vite --config configs/vite.renderer.config.ts",
     "prepublishOnly": "npm run build"
   },
   "main": "dist/main/index.js",
@@ -37,7 +35,9 @@
     "vite-plugin-dts": "^4.5.3"
   },
   "dependencies": {
+    "@electron-toolkit/preload": "^3.0.1",
     "@vue/reactivity": "^3.5.13",
-    "electron": "^35.0.1"
+    "electron": "^35.0.1",
+    "vue": "^3.5.13"
   }
 }

@@ -1,22 +1,50 @@
+import { BrowserWindow, ipcMain } from "electron";
 import { SyncStateConfig } from "../types";
-import { ref, watch, type Ref } from "@vue/reactivity";
+import { ref, toRaw, watch, WatchHandle, type Ref } from "@vue/reactivity";
+import { generateMainChannelKeyMap, generateRendererChannelKeyMap } from "../utils";
 
-const createSyncState = <T>(data: T, config: SyncStateConfig): Ref<T> => {
-  const state = ref(data) as Ref<T>;
-  const channels = {
-
-  }
-  watch(
-    () => state.value,
-    (value) => {
-      console.log("state changed", value);
-    },
-    {
-      deep: true,
-    }
-  );
+const createRefSyncState = <T>(data: T, config: SyncStateConfig): Ref<T> => {
   console.log("createSyncState", data, config);
+  const state = ref(data) as Ref<T>;
+  const mainChannels = generateMainChannelKeyMap(config.channelPrefix);
+  const rendererChannels = generateRendererChannelKeyMap(config.channelPrefix);
+
+  let sendChangeToRendererWatch: WatchHandle | undefined = undefined
+
+  const initSendChangeToRendererWatch = () => {
+    sendChangeToRendererWatch = watch(
+      () => state.value,
+      (value) => {
+        BrowserWindow.getAllWindows().forEach((window) => {
+          window.webContents.send(rendererChannels.SET, toRaw(value));
+        })
+      },
+      {
+        deep: true,
+      }
+    );
+  }
+  initSendChangeToRendererWatch()
+  ipcMain.on(mainChannels.GET, (event) => {
+    event.reply(rendererChannels.SET, toRaw(state.value));
+  });
+
+  // 从渲染进程来的值变动
+  ipcMain.on(mainChannels.SET, (_event, value: T) => {
+    if (sendChangeToRendererWatch) {
+      sendChangeToRendererWatch.stop();
+      sendChangeToRendererWatch = undefined;
+    }
+    state.value = value;
+    console.log("ipcMain.on", value);
+    initSendChangeToRendererWatch();
+  });
+
   return state;
 };
 
-export { type SyncStateConfig, createSyncState };
+const createReactiveSyncState = () => {
+  console.log("createReactiveSyncState");
+}
+
+export { type SyncStateConfig, createRefSyncState };

@@ -18,7 +18,8 @@
   },
   "include": [
     "src/renderer/**/*",
-    "src/types/**/*"
+    "src/types/**/*",
+    "src/utils/**/*",
   ],
   "exclude": [
     "node_modules"

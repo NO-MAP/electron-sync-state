@@ -1,3 +1,17 @@
 export interface SyncStateConfig {
   channelPrefix: string
 }
+
+// 主进程监听的key
+export enum SyncStateMainChannelKey {
+  GET = 'GET',
+  SET = 'SET',
+}
+
+// 渲染进程监听的key
+export enum SyncStateRendererChannelKey {
+  SET = 'SET',
+}
+
+
+
