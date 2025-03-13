@@ -1,15 +1,23 @@
 import { BrowserWindow, ipcMain } from "electron";
-import { SyncStateConfig } from "../types";
+import { SyncStateConfig, SyncWatchHandle } from "../types";
 import { ref, toRaw, watch, WatchHandle, type Ref } from "@vue/reactivity";
-import { generateMainChannelKeyMap, generateRendererChannelKeyMap } from "../utils";
+import {
+  generateMainChannelKeyMap,
+  generateRendererChannelKeyMap,
+} from "../utils";
 
-const createRefSyncState = <T>(data: T, config: SyncStateConfig): Ref<T> => {
-  console.log("createSyncState", data, config);
+const createRefSyncState = <T>(
+  data: T,
+  config: SyncStateConfig
+): {
+  result: Ref<T>;
+  syncWatchHandle: SyncWatchHandle;
+} => {
   const state = ref(data) as Ref<T>;
   const mainChannels = generateMainChannelKeyMap(config.channelPrefix);
   const rendererChannels = generateRendererChannelKeyMap(config.channelPrefix);
 
-  let sendChangeToRendererWatch: WatchHandle | undefined = undefined
+  let sendChangeToRendererWatch: WatchHandle | undefined = undefined;
 
   const initSendChangeToRendererWatch = () => {
     sendChangeToRendererWatch = watch(
@@ -17,14 +25,14 @@ const createRefSyncState = <T>(data: T, config: SyncStateConfig): Ref<T> => {
       (value) => {
         BrowserWindow.getAllWindows().forEach((window) => {
           window.webContents.send(rendererChannels.SET, toRaw(value));
-        })
+        });
       },
       {
         deep: true,
       }
     );
-  }
-  initSendChangeToRendererWatch()
+  };
+  initSendChangeToRendererWatch();
   ipcMain.on(mainChannels.GET, (event) => {
     event.reply(rendererChannels.SET, toRaw(state.value));
   });
@@ -36,15 +44,20 @@ const createRefSyncState = <T>(data: T, config: SyncStateConfig): Ref<T> => {
       sendChangeToRendererWatch = undefined;
     }
     state.value = value;
-    console.log("ipcMain.on", value);
     initSendChangeToRendererWatch();
   });
 
-  return state;
+  return {
+    result: state,
+    syncWatchHandle: {
+      pause: () => {
+        sendChangeToRendererWatch?.pause()
+      },
+      resume: () => {
+        sendChangeToRendererWatch?.resume()
+      }
+    }
+  };
 };
-
-const createReactiveSyncState = () => {
-  console.log("createReactiveSyncState");
-}
 
 export { type SyncStateConfig, createRefSyncState };

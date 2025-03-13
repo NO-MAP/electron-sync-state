@@ -13,5 +13,7 @@ export enum SyncStateRendererChannelKey {
   SET = 'SET',
 }
 
-
-
+export interface SyncWatchHandle {
+  pause: () => void;
+  resume: () => void;
+}
