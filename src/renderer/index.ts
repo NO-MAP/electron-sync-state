@@ -5,21 +5,21 @@ import { generateMainChannelKeyMap, generateRendererChannelKeyMap } from '../uti
 
 const useSyncState = <T>(config: SyncStateConfig, ipcRenderer: IpcRenderer): {
   loading: boolean;
-  data: UnwrapRef<T>;
+  value: UnwrapRef<T>;
 } => {
   const result = reactive<{
     loading: boolean,
-    data: T
+    value: T
   }>({
     loading: true,
-    data: undefined as unknown as T
+    value: undefined as unknown as T
   })
   const mainChannels = generateMainChannelKeyMap(config.channelPrefix);
   const rendererChannels = generateRendererChannelKeyMap(config.channelPrefix);
 
   let sendChangeToMainWatch: WatchHandle | undefined = undefined
   const initSendChnageToMainWatch = () => {
-    sendChangeToMainWatch = watch(() => result.data, (value) => {
+    sendChangeToMainWatch = watch(() => result.value, (value) => {
       ipcRenderer.send(mainChannels.SET, toRaw(value))
     }, {
       deep: true
@@ -32,7 +32,7 @@ const useSyncState = <T>(config: SyncStateConfig, ipcRenderer: IpcRenderer): {
       sendChangeToMainWatch = undefined
     }
     console.log('ipcRenderer.on', value)
-    result.data = value
+    result.value = value
     initSendChnageToMainWatch()
     result.loading = false
   })

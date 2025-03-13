@@ -5,7 +5,7 @@ import { useSyncState } from '../../../../dist/renderer'
 const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
 
 const state = useSyncState<{
-  count: number,
+  count: number
   nested: {
     count: number
   }
@@ -18,8 +18,8 @@ const state = useSyncState<{
 
 console.log('state', state)
 const addHandle = (): void => {
-  state.data.count++
-  state.data.nested.count++
+  state.value.count++
+  state.value.nested.count++
 }
 </script>
 

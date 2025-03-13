@@ -1,12 +1,17 @@
 {
   "name": "electron-sync-state",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "build:main": "vite build -c configs/vite.main.config.ts",
     "build:renderer": "vite build -c configs/vite.renderer.config.ts",
     "build": "npm run build:main && npm run build:renderer",
     "prepublishOnly": "npm run build"
   },
+  "keywords": [
+    "electron",
+    "vue3",
+    "sync-state"
+  ],
   "exports": {
     "./main": {
       "import": "./dist/main/index.mjs",
@@ -40,3 +45,4 @@
     "vue": "^3.5.13"
   }
 }
+
