@@ -8,7 +8,7 @@ import {
 
 const createRefSyncState = <T>(
   initState: T,
-  config: SyncStateConfig
+  config: SyncStateConfig<T>
 ): {
   state: Ref<T>;
   syncWatchHandle: SyncWatchHandle;
@@ -18,8 +18,13 @@ const createRefSyncState = <T>(
   const mainChannels = generateMainChannelKeyMap(config.channelPrefix);
   const rendererChannels = generateRendererChannelKeyMap(config.channelPrefix);
 
-  let sendChangeToRendererWatch: WatchHandle | undefined = undefined;
+  // 渲染进程初始化
+  ipcMain.on(mainChannels.GET, (event) => {
+    event.reply(rendererChannels.SET, toRaw(state.value));
+  });
 
+  // 监听变化反应给渲染进程
+  let sendChangeToRendererWatch: WatchHandle | undefined = undefined;
   const initSendChangeToRendererWatch = () => {
     sendChangeToRendererWatch = watch(
       () => state.value,
@@ -37,9 +42,6 @@ const createRefSyncState = <T>(
     );
   };
   initSendChangeToRendererWatch();
-  ipcMain.on(mainChannels.GET, (event) => {
-    event.reply(rendererChannels.SET, toRaw(state.value));
-  });
 
   // 从渲染进程来的值变动
   ipcMain.on(mainChannels.SET, (_event, value: T) => {
@@ -53,6 +55,13 @@ const createRefSyncState = <T>(
     state.value = value;
     initSendChangeToRendererWatch();
   });
+
+  // 监听变化反应抛出 changge
+  watch(() => state.value, (value) => {
+    if (config.onChange) {
+      config.onChange(toRaw(value))
+    }
+  })
 
   return {
     state,

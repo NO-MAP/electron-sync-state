@@ -12,7 +12,7 @@ interface Result<T> {
 }
 
 const useSyncState = <T>(
-  config: SyncStateConfig,
+  config: SyncStateConfig<T>,
   ipcRenderer: IpcRenderer
 ): {
   result: Result<T>;
