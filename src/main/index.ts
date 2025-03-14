@@ -7,14 +7,14 @@ import {
 } from "../utils";
 
 const createRefSyncState = <T>(
-  data: T,
+  initState: T,
   config: SyncStateConfig
 ): {
-  result: Ref<T>;
+  state: Ref<T>;
   syncWatchHandle: SyncWatchHandle;
 } => {
   const debug = config.debug === undefined ? false : true;
-  const state = ref(data) as Ref<T>;
+  const state = ref(initState) as Ref<T>;
   const mainChannels = generateMainChannelKeyMap(config.channelPrefix);
   const rendererChannels = generateRendererChannelKeyMap(config.channelPrefix);
 
@@ -55,7 +55,7 @@ const createRefSyncState = <T>(
   });
 
   return {
-    result: state,
+    state,
     syncWatchHandle: {
       pause: () => {
         sendChangeToRendererWatch?.pause();

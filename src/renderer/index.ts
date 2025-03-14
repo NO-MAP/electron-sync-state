@@ -8,7 +8,7 @@ import {
 
 interface Result<T> {
   loading: boolean;
-  value: UnwrapRef<T>;
+  state: UnwrapRef<T>;
 }
 
 const useSyncState = <T>(
@@ -21,10 +21,10 @@ const useSyncState = <T>(
   const debug = config.debug === undefined ? false : true;
   const result = reactive<{
     loading: boolean;
-    value: T;
+    state: T;
   }>({
     loading: true,
-    value: undefined as unknown as T,
+    state: undefined as unknown as T,
   });
   const mainChannels = generateMainChannelKeyMap(config.channelPrefix);
   const rendererChannels = generateRendererChannelKeyMap(config.channelPrefix);
@@ -32,7 +32,7 @@ const useSyncState = <T>(
   let sendChangeToMainWatch: WatchHandle | undefined = undefined;
   const initSendChangeToMainWatch = () => {
     sendChangeToMainWatch = watch(
-      () => result.value,
+      () => result.state,
       (value) => {
         if (debug) {
           console.log("send change to main", value);
@@ -54,7 +54,7 @@ const useSyncState = <T>(
       sendChangeToMainWatch = undefined;
     }
     console.log("ipcRenderer.on", value);
-    result.value = value;
+    result.state = value;
     initSendChangeToMainWatch();
     result.loading = false;
   });

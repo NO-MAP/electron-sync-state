@@ -2,6 +2,9 @@
 
 `electron-sync-state` 是一个用于在 Electron 应用中自动同步主进程和渲染进程之间状态的库。它提供了一种简单的方式来管理和共享状态，确保主进程和渲染进程之间的数据始终保持一致。
 
+### 注意：该库仅支持 `Vue` 3.5 及以上版本
+因为该库依赖于 `vue` `@vue/reactivity` 3.5+ 版本的新api
+
 ## 安装
 
 你可以通过 npm 或 yarn 来安装 `electron-sync-state`：
