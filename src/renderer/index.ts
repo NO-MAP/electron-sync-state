@@ -6,7 +6,7 @@ import {
   generateRendererChannelKeyMap,
 } from "../utils";
 
-interface Result<T> {
+interface WrapperState<T> {
   loading: boolean;
   state: UnwrapRef<T>;
 }
@@ -15,11 +15,11 @@ const useSyncState = <T>(
   config: SyncStateConfig<T>,
   ipcRenderer: IpcRenderer
 ): {
-  result: Result<T>;
+  wrapperState: WrapperState<T>;
   syncWatchHandle: SyncWatchHandle;
 } => {
   const debug = config.debug === undefined ? false : true;
-  const result = reactive<{
+  const wrapperState = reactive<{
     loading: boolean;
     state: T;
   }>({
@@ -32,7 +32,7 @@ const useSyncState = <T>(
   let sendChangeToMainWatch: WatchHandle | undefined = undefined;
   const initSendChangeToMainWatch = () => {
     sendChangeToMainWatch = watch(
-      () => result.state,
+      () => wrapperState.state,
       (value) => {
         if (debug) {
           console.log("send change to main", value);
@@ -54,15 +54,15 @@ const useSyncState = <T>(
       sendChangeToMainWatch = undefined;
     }
     console.log("ipcRenderer.on", value);
-    result.state = value;
+    wrapperState.state = value;
     initSendChangeToMainWatch();
-    result.loading = false;
+    wrapperState.loading = false;
   });
 
   ipcRenderer.send(mainChannels.GET);
 
   return {
-    result,
+    wrapperState,
     syncWatchHandle: {
       pause: () => {
         sendChangeToMainWatch?.pause();

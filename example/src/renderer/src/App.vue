@@ -4,7 +4,7 @@ import { useSyncState } from '../../../../dist/renderer'
 
 const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
 
-const state = useSyncState<{
+const { wrapperState } = useSyncState<{
   count: number
   nested: {
     count: number
@@ -16,10 +16,10 @@ const state = useSyncState<{
   window.electron.ipcRenderer
 )
 
-console.log('state', state)
+console.log('state', wrapperState)
 const addHandle = (): void => {
-  state.value.count++
-  state.value.nested.count++
+  wrapperState.state.count++
+  wrapperState.state.nested.count++
 }
 </script>
 
@@ -41,7 +41,7 @@ const addHandle = (): void => {
       <a target="_blank" rel="noreferrer" @click="ipcHandle">Send IPC</a>
     </div>
     <div>
-      {{ state }}
+      {{ wrapperState }}
     </div>
   </div>
   <button @click="() => addHandle()">ADD</button>

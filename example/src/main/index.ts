@@ -5,7 +5,7 @@ import icon from '../../resources/icon.png?asset'
 import { createRefSyncState } from '../../../dist/main'
 
 function createWindow(): void {
-  const state = createRefSyncState(
+  const { state } = createRefSyncState(
     {
       count: 0,
       nested: {
@@ -22,7 +22,7 @@ function createWindow(): void {
   }, 10000)
 
   setTimeout(() => {
-    state.value = { count: 1, nested: { count: 1 } }
+    state.value = { count: 10, nested: { count: 10 } }
   }, 20000)
   // Create the browser window.
   const mainWindow = new BrowserWindow({

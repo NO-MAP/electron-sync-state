@@ -1,7 +1,7 @@
 export interface SyncStateConfig<T> {
   channelPrefix: string
   debug?: boolean
-  onChange: (value: T) => void
+  onChange?: (value: T) => void
 }
 
 // 主进程监听的key
