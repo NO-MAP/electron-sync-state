@@ -1,7 +1,8 @@
 import { BrowserWindow, ipcMain } from "electron";
 import { SyncStateConfig, SyncWatchHandle } from "../types";
-import { ref, toRaw, watch, WatchHandle, type Ref } from "@vue/reactivity";
+import { ref, watch, WatchHandle, type Ref } from "@vue/reactivity";
 import {
+  deepClone,
   generateMainChannelKeyMap,
   generateRendererChannelKeyMap,
 } from "../utils";
@@ -20,7 +21,7 @@ const createRefSyncState = <T>(
 
   // 渲染进程初始化
   ipcMain.on(mainChannels.GET, (event) => {
-    event.reply(rendererChannels.SET, toRaw(state.value));
+    event.reply(rendererChannels.SET, deepClone(state.value));
   });
 
   // 监听变化反应给渲染进程
@@ -33,7 +34,7 @@ const createRefSyncState = <T>(
           console.log("send change to renderer", value);
         }
         BrowserWindow.getAllWindows().forEach((window) => {
-          window.webContents.send(rendererChannels.SET, toRaw(value));
+          window.webContents.send(rendererChannels.SET, deepClone(value));
         });
       },
       {
@@ -59,7 +60,7 @@ const createRefSyncState = <T>(
   // 监听变化反应抛出 changge
   watch(() => state.value, (value) => {
     if (config.onChange) {
-      config.onChange(toRaw(value))
+      config.onChange(deepClone(value))
     }
   })
 

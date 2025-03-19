@@ -15,3 +15,7 @@ export function generateRendererChannelKeyMap(prefix: string): Record<SyncStateR
     [SyncStateRendererChannelKey.SET]: `${prefix}-${SyncStateRendererChannelKey.SET}`,
   }
 }
+
+export function deepClone<T>(data: T): T {
+  return JSON.parse(JSON.stringify(data))
+}

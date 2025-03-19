@@ -1,7 +1,8 @@
 import { type IpcRenderer } from "@electron-toolkit/preload";
 import { SyncStateConfig, SyncWatchHandle } from "../types";
-import { reactive, toRaw, watch, type UnwrapRef, WatchHandle } from "vue";
+import { reactive, watch, type UnwrapRef, WatchHandle } from "vue";
 import {
+  deepClone,
   generateMainChannelKeyMap,
   generateRendererChannelKeyMap,
 } from "../utils";
@@ -37,7 +38,7 @@ const useSyncState = <T>(
         if (debug) {
           console.log("send change to main", value);
         }
-        ipcRenderer.send(mainChannels.SET, toRaw(value));
+        ipcRenderer.send(mainChannels.SET, deepClone(value));
       },
       {
         deep: true,
