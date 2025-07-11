@@ -14,7 +14,7 @@ const createRefSyncState = <T>(
   state: Ref<T>;
   syncWatchHandle: SyncWatchHandle;
 } => {
-  const debug = config.debug === undefined ? false : true;
+  const debug = config.debug === undefined ? false : !!config.debug;
   const state = ref(initState) as Ref<T>;
   const mainChannels = generateMainChannelKeyMap(config.channelPrefix);
   const rendererChannels = generateRendererChannelKeyMap(config.channelPrefix);
@@ -31,7 +31,7 @@ const createRefSyncState = <T>(
       () => state.value,
       (value) => {
         if (debug) {
-          console.log("send change to renderer", value);
+          console.log("send change to renderer", JSON.stringify(value));
         }
         BrowserWindow.getAllWindows().forEach((window) => {
           window.webContents.send(rendererChannels.SET, deepClone(value));
@@ -47,7 +47,7 @@ const createRefSyncState = <T>(
   // 从渲染进程来的值变动
   ipcMain.on(mainChannels.SET, (_event, value: T) => {
     if (debug) {
-      console.log("change from renderer", value);
+      console.log("change from renderer", JSON.stringify(value));
     }
     if (sendChangeToRendererWatch) {
       sendChangeToRendererWatch.stop();
@@ -57,12 +57,12 @@ const createRefSyncState = <T>(
     initSendChangeToRendererWatch();
   });
 
-  // 监听变化反应抛出 changge
+  // 监听变化反应抛出 change
   watch(() => state.value, (value) => {
     if (config.onChange) {
       config.onChange(deepClone(value))
     }
-  })
+  }, { deep: true })
 
   return {
     state,

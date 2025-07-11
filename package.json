@@ -1,6 +1,6 @@
 {
   "name": "electron-sync-state",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "scripts": {
     "build:main": "vite build -c configs/vite.main.config.ts",
     "build:renderer": "vite build -c configs/vite.renderer.config.ts",
