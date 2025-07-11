@@ -62,7 +62,7 @@ const createRefSyncState = <T>(
     if (config.onChange) {
       config.onChange(deepClone(value))
     }
-  }, { deep: true })
+  })
 
   return {
     state,
